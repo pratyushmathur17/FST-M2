@@ -1,0 +1,17 @@
+-- Delete Table
+
+DROP TABLE Zipcodes;
+
+-- Create the tables with partisions and buckets
+CREATE TABLE zipcodes (RecordNumber int, Country string, City string, Zipcode int)
+PARTITIONED BY (state string)
+CLUSTERED BY (Zipcode) INTO 3 BUCKETS
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+-- Load data into table
+LOAD DATA LOCAL INPATH '/root/zipcodes.csv' INTO TABLE zipcodes;
+
+-- Execute query on tables
+INSERT OVERWRITE LOCAL DIRECTORY '/root/result'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM zipcodes WHERE state='PR';
